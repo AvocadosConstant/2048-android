@@ -39,6 +39,7 @@ public class Board {
     }
 
     public int getSize() {return this.size;}
+
     public void init() {
         Random rng = new Random();
         for(int i = 0; i < 2; i++) {

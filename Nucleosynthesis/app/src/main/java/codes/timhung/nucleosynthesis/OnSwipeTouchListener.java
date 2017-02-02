@@ -5,7 +5,6 @@ package codes.timhung.nucleosynthesis;
  * http://stackoverflow.com/questions/4139288/android-how-to-handle-right-to-left-swipe-gestures
  */
 
-
 import android.content.Context;
 import android.os.Handler;
 import android.view.GestureDetector;
@@ -46,18 +45,18 @@ public class OnSwipeTouchListener implements OnTouchListener {
                 if (Math.abs(diffX) > Math.abs(diffY)) {
                     if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
                         if (diffX > 0) {
-                            onSwipeRight();
+                            onSwipe(Constants.RIGHT);
                         } else {
-                            onSwipeLeft();
+                            onSwipe(Constants.LEFT);
                         }
                     }
                     result = true;
                 }
                 else if (Math.abs(diffY) > SWIPE_THRESHOLD && Math.abs(velocityY) > SWIPE_VELOCITY_THRESHOLD) {
                     if (diffY > 0) {
-                        onSwipeBottom();
+                        onSwipe(Constants.DOWN);
                     } else {
-                        onSwipeTop();
+                        onSwipe(Constants.UP);
                     }
                 }
                 result = true;
@@ -69,15 +68,9 @@ public class OnSwipeTouchListener implements OnTouchListener {
         }
     }
 
-    public void onSwipeRight() {
-    }
-
-    public void onSwipeLeft() {
-    }
-
-    public void onSwipeTop() {
-    }
-
-    public void onSwipeBottom() {
-    }
+    /**
+     * Overridden in GameActivity.java to handle swipe gestures
+     * @param flag Direction of swipe
+     */
+    public void onSwipe(String flag) {}
 }
