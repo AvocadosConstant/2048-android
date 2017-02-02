@@ -14,7 +14,15 @@
     tools:showIn="@layout/activity_game">
 
     <TextView
+        android:id="@+id/testText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Hello World!" />
+
+    <GridView
+        android:id="@+id/boardGrid"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
 </RelativeLayout>

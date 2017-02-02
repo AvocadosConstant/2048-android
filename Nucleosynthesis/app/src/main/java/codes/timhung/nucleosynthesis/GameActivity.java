@@ -8,15 +8,38 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.GridView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 public class GameActivity extends AppCompatActivity {
 
+    GridView boardGrid;
+    TextView testText;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        boardGrid = (GridView) findViewById(R.id.boardGrid);
+        testText = (TextView) findViewById(R.id.testText);
+
+        boardGrid.setOnTouchListener(new OnSwipeTouchListener(GameActivity.this) {
+            public void onSwipeTop() {
+                testText.setText("top");
+            }
+            public void onSwipeRight() {
+                testText.setText("right");
+            }
+            public void onSwipeLeft() {
+                testText.setText("left");
+            }
+            public void onSwipeBottom() {
+                testText.setText("down");
+            }
+        });
 
         /*
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
