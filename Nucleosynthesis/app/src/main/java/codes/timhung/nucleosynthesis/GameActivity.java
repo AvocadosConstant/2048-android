@@ -62,7 +62,7 @@ public class GameActivity extends AppCompatActivity {
             public void onSwipeBottom() {
                 old = new Board(board);
                 testText.setText("down");
-                board.slideRight();
+                board.slideDown();
                 updateBoard();
             }
         });
