@@ -10,14 +10,17 @@ import java.util.Random;
 public class Board {
 
     private int[][] board;
+    private int size;
 
     public Board() {
         this.board = new int[4][4];
+        this.size = this.getBoard()[0].length * this.getBoard().length;
         this.init();
     }
 
     public Board(Board that) {
         this.board = new int[that.getBoard().length][that.getBoard()[0].length];
+        this.size = this.getBoard()[0].length * this.getBoard().length;
         this.setBoard(that);
     }
 
@@ -35,6 +38,7 @@ public class Board {
         return Arrays.deepEquals(this.getBoard(), that.getBoard());
     }
 
+    public int getSize() {return this.size;}
     public void init() {
         Random rng = new Random();
         for(int i = 0; i < 2; i++) {
@@ -139,5 +143,14 @@ public class Board {
         this.slideUp();
         this.rotateCW();
         this.rotateCW();
+    }
+
+    public String[] toStrArr() {
+        String[] boardArray = new String[this.getSize()];
+        for(int i = 0; i < this.getSize(); i++) {
+            boardArray[i] = Integer.toString(
+                    this.getBoard()[i % 4][i / 4]);
+        }
+        return boardArray;
     }
 }

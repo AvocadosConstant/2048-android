@@ -1,56 +1,82 @@
 package codes.timhung.nucleosynthesis;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class GameActivity extends AppCompatActivity {
-
+    Toolbar toolbar;
     GridView boardGrid;
+    ArrayAdapter<String> adapter;
     TextView testText;
+    Board board;
+    Board old;
+    String[] boardArray = new String[] {
+            "0", "0", "0", "0",
+            "0", "0", "0", "0",
+            "0", "0", "0", "0",
+            "0", "0", "0", "0"};
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        board = new Board();
+        old = new Board(board);
+        boardArray = board.toStrArr();
+
         boardGrid = (GridView) findViewById(R.id.boardGrid);
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, boardArray);
+        boardGrid.setAdapter(adapter);
+
         testText = (TextView) findViewById(R.id.testText);
 
         boardGrid.setOnTouchListener(new OnSwipeTouchListener(GameActivity.this) {
             public void onSwipeTop() {
+                old = new Board(board);
                 testText.setText("top");
+                board.slideUp();
+                updateBoard();
             }
             public void onSwipeRight() {
+                old = new Board(board);
                 testText.setText("right");
+                board.slideRight();
+                updateBoard();
             }
             public void onSwipeLeft() {
+                old = new Board(board);
                 testText.setText("left");
+                board.slideLeft();
+                updateBoard();
             }
             public void onSwipeBottom() {
+                old = new Board(board);
                 testText.setText("down");
+                board.slideRight();
+                updateBoard();
             }
         });
+    }
 
-        /*
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-        */
+    public void updateBoard() {
+        if(!board.equals(old)) {
+            board.spawn();
+            boardArray = board.toStrArr();
+
+            adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, boardArray);
+            boardGrid.invalidateViews();
+            boardGrid.setAdapter(adapter);
+        }
     }
 
     @Override
