@@ -30,10 +30,12 @@ public class Tile<T> {
     public void setMoved(boolean moved) {this.moved = moved;}
 
     public boolean equals(Tile<T> that) {
-        return this.getVal() != null && this.getVal().equals(that.getVal());
+        return (this.isEmpty() && that.isEmpty())
+                || (!this.isEmpty() && this.getVal().equals(that.getVal()));
     }
 
+    @Override
     public String toString() {
-        return (this.getVal() == null || this.isEmpty()) ? "" : this.getVal().toString();
+        return (this.isEmpty() || this.getVal() == null) ? "." : this.getVal().toString();
     }
 }

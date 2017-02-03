@@ -17,10 +17,8 @@ public class Board<T> {
     private int width;
     private int height;
     private T spawnValue;
-    //BiFunction<Tile<T>, Tile<T>, Tile<T>> combine;
     private Combine<T> combine;
 
-    //public Board(T spawnValue, BiFunction<Tile<T>, Tile<T>, Tile<T>> combine) {
     public Board(T spawnValue, Combine<T> combine) {
         this.board = new ArrayList<>();
         for(int y = 0; y < DEFAULT_DIM; y++) {
@@ -39,12 +37,12 @@ public class Board<T> {
 
     public Board(int width, int height, T spawnValue, Combine<T> combine) {
         this.board = new ArrayList<>();
-        for(int y = 0; y < width; y++) {
+        for(int x = 0; x < height; x++) {
             ArrayList<Tile<T>> col = new ArrayList<>();
-            for(int x = 0; x < height; x++) {
+            for(int y = 0; y < width; y++) {
                 col.add(new Tile<>(null));
             }
-            Log.d("BOARD_CTOR", "added col: " + col);
+            //Log.d("BOARD_CTOR", "added col: " + col);
             this.board.add(col);
         }
         this.width = width;
@@ -54,33 +52,32 @@ public class Board<T> {
         this.init();
     }
 
-    public Board(Board<T> that) {
+    public Board(final Board<T> that) {
         Log.d("BOARD_CTOR", "constructing a new board from a given one!");
         //this.setBoard(that);
         this.width = that.getWidth();
         this.height = that.getHeight();
-
-        this.board = new ArrayList<>();
-        for(int y = 0; y < width; y++) {
-            ArrayList<Tile<T>> col = new ArrayList<>();
-            for(int x = 0; x < height; x++) {
-                col.add(that.get(x, y));
-            }
-            Log.d("BOARD_CTOR", "added col: " + col);
-            this.board.add(col);
-        }
-
-        Log.d("BOARD_CTOR", "set board to:\n");
-        for(int i = 0; i < width; i++) {
-            Log.d("BOARD_CTOR", this.board.get(i).toString());
-        }
-
+        this.setBoard(that);
         this.spawnValue = that.getSpawnValue();
         this.combine = that.getCombine();
     }
 
-    //public void setBoard(Board<T> that) {
-    //}
+    public void setBoard(final Board<T> that) {
+        this.board = new ArrayList<>();
+        for(int x = 0; x < this.getHeight(); x++) {
+            ArrayList<Tile<T>> col = new ArrayList<>();
+            for(int y = 0; y < this.getWidth(); y++) {
+                Tile<T> copiedTile = new Tile<>(that.get(x, y).getVal());
+                copiedTile.setEmpty(that.get(x, y).isEmpty());
+                col.add(copiedTile);
+            }
+            this.board.add(col);
+        }
+        Log.d("SET_BOARD", "set board to:\n");
+        for(int y = 0; y < this.getWidth(); y++) {
+            Log.d("SET_BOARD", "row " + y + this.rowToStr(y));
+        }
+    }
 
     public Tile<T> get(int x, int y) {return this.getBoard().get(x).get(y);}
 
@@ -92,14 +89,18 @@ public class Board<T> {
 
     public T getSpawnValue() {return this.spawnValue;}
 
-    //public  BiFunction<Tile<T>, Tile<T>, Tile<T>>  getCombine() {return this.combine;}
+    public void setWidth(int width) {this.width = width;}
+
+    public void setHeight(int height) {this.height = height;}
+
     public Combine<T> getCombine() {return this.combine;}
 
     public boolean equals(Board<T> that) {
         for(int y = 0; y < width; y++) {
             for(int x = 0; x < height; x++) {
-                if(this.get(x, y) != null
-                        && !this.get(x, y).equals(that.get(x, y))) return false;
+                Log.d("BOARD_EQUALS", "(" + x + ", " + y + ") Comparing " + this.get(x,y).toString() + " and "
+                        + that.get(x, y).toString() + " | are they equal? " + this.get(x, y).equals(that.get(x, y)));
+                if(!this.get(x, y).equals(that.get(x, y))) return false;
             }
         } return true;
     }
@@ -131,12 +132,6 @@ public class Board<T> {
         }
     }
 
-    /*
-    public Tile<T> combine(Tile<T> lhs, Tile<T> rhs, BiFunction<Tile<T>, Tile<T>, Tile<T>> lambda) {
-        return lambda.apply(lhs, rhs);
-    }
-    */
-
     /**
      * Handles the sliding of a column of Tiles
      * @param col Column to be slid
@@ -158,8 +153,8 @@ public class Board<T> {
                 }
                 Log.d("SLIDE", "i = " + i + " | target: " + target);
                 Log.d("SLIDE", "col[i] = " + col.get(i) + " | col[target]: " + col.get(target));
-                Log.d("SLIDE", "are they equal? " + col.get(i).equals(col.get(target)));
-                Log.d("SLIDE", "is target empty? " + col.get(target).isEmpty());
+                //Log.d("SLIDE", "are they equal? " + col.get(i).equals(col.get(target)));
+                //Log.d("SLIDE", "is target empty? " + col.get(target).isEmpty());
                 if(!col.get(target).wasMoved() && !col.get(i).wasMoved()
                         && col.get(i).equals(col.get(target))
                         && !col.get(target).isEmpty()) {
@@ -181,7 +176,7 @@ public class Board<T> {
                     // Tiles are different, so move current Tile to empty space right of target
                     Log.d("SLIDE", "tiles are different, sliding into next empty, now is: " + col.toString());
                     col.get(target + 1).setVal(col.get(i).getVal());
-                    col.get(target).setEmpty(false);
+                    col.get(target + 1).setEmpty(false);
                     col.get(i).setEmpty(true);
                 }
             }
@@ -193,20 +188,45 @@ public class Board<T> {
     }
 
     private void transpose() {
-        for(int i = 0; i < this.getHeight(); i++) {
-            for(int j = i; j < this.getWidth(); j++) {
-                T tmp = board.get(i).get(j).getVal();
-                this.get(i, j).setVal(this.get(j, i).getVal());
-                this.get(j, i).setVal(tmp);
+        Log.d("TRANSPOSE", "before: " + board);
+        for(int y = 0; y < this.getWidth(); y++) {
+            Log.d("TRANSPOSE", "-row " + y + this.rowToStr(y));
+        }
+        ArrayList<ArrayList<Tile<T>>> transposed = new ArrayList<>();
+
+        // For each row in the board
+        for(int y = 0; y < this.getWidth(); y++) {
+            // We will construct the corresponding column in the transpose
+            ArrayList<Tile<T>> transCol = new ArrayList<>();
+            for(int x = 0; x < this.getHeight(); x++) {
+                // Fill transCol with values of the original row
+                transCol.add(this.get(x, y));
             }
+            transposed.add(transCol);
+        }
+        this.board = transposed;
+        int tmp = this.getWidth();
+        this.setWidth(this.getHeight());
+        this.setHeight(tmp);
+        Log.d("TRANSPOSE", "after: " + board);
+        for(int y = 0; y < this.getWidth(); y++) {
+            Log.d("TRANSPOSE", "-row " + y + this.rowToStr(y));
         }
     }
 
     private void reverseRows() {
+        Log.d("REV_ROWS", "before: " + board);
+        for(int y = 0; y < this.getWidth(); y++) {
+            Log.d("REV_ROWS", "-row " + y + this.rowToStr(y));
+        }
         for(int i = 0, j = this.getWidth() - 1; i < j; i++, j--) {
             ArrayList<Tile<T>> tmp = this.getBoard().get(i);
             this.getBoard().set(i, this.getBoard().get(j));
             this.getBoard().set(j, tmp);
+        }
+        Log.d("REV_ROWS", "after: " + board);
+        for(int y = 0; y < this.getWidth(); y++) {
+            Log.d("REV_ROWS", "-row " + y + this.rowToStr(y));
         }
     }
 
@@ -221,14 +241,10 @@ public class Board<T> {
     }
 
     public void slideUp() {
-        //for(ArrayList<Tile<T>> col : this.getBoard()) {
-        //    col = slideCol(col);
-        //}
-        for(int i = 0; i < this.getWidth(); i++) {
-            ArrayList<Tile<T>> slidCol = slideCol(this.getBoard().get(i));
-            Log.d("SLIDE_UP", "final slid column: " + slidCol);
-            board.set(i, slidCol);
-            Log.d("SLIDE_UP", "board column: " + this.getBoard().get(i));
+        for(int x = 0; x < this.getWidth(); x++) {
+            Log.d("SLIDE_UP", "sliding col " + x + ": " + this.getBoard().get(x));
+            slideCol(this.getBoard().get(x));
+            Log.d("SLIDE_UP", "board column: " + this.getBoard().get(x));
         }
     }
 
@@ -259,5 +275,12 @@ public class Board<T> {
             boardArray[i] = this.get(i % 4, i / 4).toString();
         }
         return boardArray;
+    }
+
+    public String rowToStr(int index) {
+        String row = "|";
+        for(int x = 0; x < this.getHeight(); x++) {
+            row += "\t" + this.get(x, index).toString();
+        } return row + "\t|";
     }
 }

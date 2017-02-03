@@ -16,8 +16,8 @@ public class GameActivity extends AppCompatActivity {
     GridView boardGrid;
     ArrayAdapter<String> adapter;
 
-    Board board;
-    Board old;
+    Board<Integer> board;
+    Board<Integer> old;
     String[] boardArray;
 
     /**
@@ -29,6 +29,7 @@ public class GameActivity extends AppCompatActivity {
     Tile<Integer> combine(Tile<Integer> lhs, Tile<Integer> rhs) {
         return new Tile<>(lhs.getVal() + rhs.getVal());
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,19 +56,34 @@ public class GameActivity extends AppCompatActivity {
         boardGrid.setOnTouchListener(new OnSwipeTouchListener(GameActivity.this) {
             @Override
             public void onSwipe(String flag) {
-                old = new Board<>(board);
+                old.setBoard(board);
+
+                Log.d("ON_SWIPE", "Printing old and new boards. Should be the same!");
+                Log.d("ON_SWIPE", "old: " + old);
+                for(int y = 0; y < old.getWidth(); y++) {
+                    Log.d("ON_SWIPE", "-row " + y + old.rowToStr(y));
+                }
+                Log.d("ON_SWIPE", "new: " + board);
+                for(int y = 0; y < board.getWidth(); y++) {
+                    Log.d("ON_SWIPE", "-row " + y + board.rowToStr(y));
+                }
+
                 testText.setText(flag);
                 switch(flag) {
                     case Constants.UP:
+                        Log.d("ON_SWIPE", "Sliding up");
                         board.slideUp();
                         break;
                     case Constants.DOWN:
+                        Log.d("ON_SWIPE", "Sliding down");
                         board.slideDown();
                         break;
                     case Constants.LEFT:
+                        Log.d("ON_SWIPE", "Sliding left");
                         board.slideLeft();
                         break;
                     case Constants.RIGHT:
+                        Log.d("ON_SWIPE", "Sliding right");
                         board.slideRight();
                         break;
                     default:
@@ -79,9 +95,18 @@ public class GameActivity extends AppCompatActivity {
     }
 
     public void updateBoard() {
-        Log.d("UPDATEBOARD", "old: " + old);
-        Log.d("UPDATEBOARD", "new: " + board);
+        Log.d("UPDATE_BOARD", "Printing both boards, should be diff if valid move!");
+        Log.d("UPDATE_BOARD", "old: " + old);
+        for(int y = 0; y < old.getWidth(); y++) {
+            Log.d("UPDATE_BOARD", "-row " + y + old.rowToStr(y));
+        }
+        Log.d("UPDATE_BOARD", "new: " + board);
+        for(int y = 0; y < board.getWidth(); y++) {
+            Log.d("UPDATE_BOARD", "-row " + y + board.rowToStr(y));
+        }
+        Log.d("UPDATE_BOARD", "are the boards equal? " + board.equals(old));
         if(!board.equals(old)) {
+            Log.d("UPDATE_BOARD", "Spawning a new tile somewhere");
             board.spawn();
             boardArray = board.toStrArr();
             adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, boardArray);
