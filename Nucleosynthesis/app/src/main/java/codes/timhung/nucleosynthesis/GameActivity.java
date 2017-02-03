@@ -3,6 +3,7 @@ package codes.timhung.nucleosynthesis;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
@@ -19,6 +20,15 @@ public class GameActivity extends AppCompatActivity {
     Board old;
     String[] boardArray;
 
+    /**
+     * Combines two Integer tiles by adding their values
+     * @param lhs Left hand side Tile
+     * @param rhs Right hand side Tile
+     * @return Combination of the two tiles
+     */
+    Tile<Integer> combine(Tile<Integer> lhs, Tile<Integer> rhs) {
+        return new Tile<>(lhs.getVal() + rhs.getVal());
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,8 +42,8 @@ public class GameActivity extends AppCompatActivity {
         testText = (TextView) findViewById(R.id.testText);
 
         // Handle game board
-        board = new Board();
-        old = new Board(board);
+        board = new Board<>(2, this::combine);
+        old = new Board<>(board);
         boardArray = board.toStrArr();
 
         // Fill boardGrid with values of the board
@@ -45,7 +55,7 @@ public class GameActivity extends AppCompatActivity {
         boardGrid.setOnTouchListener(new OnSwipeTouchListener(GameActivity.this) {
             @Override
             public void onSwipe(String flag) {
-                old = new Board(board);
+                old = new Board<>(board);
                 testText.setText(flag);
                 switch(flag) {
                     case Constants.UP:
@@ -69,6 +79,8 @@ public class GameActivity extends AppCompatActivity {
     }
 
     public void updateBoard() {
+        Log.d("UPDATEBOARD", "old: " + old);
+        Log.d("UPDATEBOARD", "new: " + board);
         if(!board.equals(old)) {
             board.spawn();
             boardArray = board.toStrArr();
