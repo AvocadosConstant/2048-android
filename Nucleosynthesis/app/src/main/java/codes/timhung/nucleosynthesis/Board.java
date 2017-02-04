@@ -1,25 +1,29 @@
 package codes.timhung.nucleosynthesis;
 
 import android.util.Log;
-
 import java.util.Random;
 import java.util.ArrayList;
-import java.util.function.BiFunction;
 
 /**
  * Created by Tim Hung on 2/1/2017.
  */
 
 public class Board<T> {
-    public static final int DEFAULT_DIM = 4;
-
+    private static final int DEFAULT_DIM = 4;
     private ArrayList<ArrayList<Tile<T>>> board;
     private int width;
     private int height;
     private T spawnValue;
     private Combine<T> combine;
+    private CanCombine<T> canCombine;
 
-    public Board(T spawnValue, Combine<T> combine) {
+    /**
+     * Constructs a Board<T> of Tiles<T>
+     * @param spawnValue Default values to spawn on board
+     * @param combine Defines combination behavior for 2 Tiles lambda function
+     * @param canCombine Combination criteria evaluation lambda function
+     */
+    public Board(T spawnValue, Combine<T> combine, CanCombine<T> canCombine) {
         this.board = new ArrayList<>();
         for(int y = 0; y < DEFAULT_DIM; y++) {
             ArrayList<Tile<T>> col = new ArrayList<>();
@@ -32,26 +36,14 @@ public class Board<T> {
         this.height = 4;
         this.spawnValue = spawnValue;
         this.combine = combine;
+        this.canCombine = canCombine;
         this.init();
     }
 
-    public Board(int width, int height, T spawnValue, Combine<T> combine) {
-        this.board = new ArrayList<>();
-        for(int x = 0; x < height; x++) {
-            ArrayList<Tile<T>> col = new ArrayList<>();
-            for(int y = 0; y < width; y++) {
-                col.add(new Tile<>(null));
-            }
-            //Log.d("BOARD_CTOR", "added col: " + col);
-            this.board.add(col);
-        }
-        this.width = width;
-        this.height = height;
-        this.spawnValue = spawnValue;
-        this.combine = combine;
-        this.init();
-    }
-
+    /**
+     * Copy constructor
+     * @param that Board to copy from
+     */
     public Board(final Board<T> that) {
         Log.d("BOARD_CTOR", "constructing a new board from a given one!");
         //this.setBoard(that);
@@ -60,8 +52,25 @@ public class Board<T> {
         this.setBoard(that);
         this.spawnValue = that.getSpawnValue();
         this.combine = that.getCombine();
+        this.canCombine = that.getCanCombine();
     }
 
+    // Getters
+    public Tile<T> get(int x, int y) {return this.getBoard().get(x).get(y);}
+
+    public ArrayList<ArrayList<Tile<T>>> getBoard() {return this.board;}
+
+    public int getWidth() {return this.width;}
+
+    public int getHeight() {return this.height;}
+
+    public T getSpawnValue() {return this.spawnValue;}
+
+    public Combine<T> getCombine() {return this.combine;}
+
+    public CanCombine<T> getCanCombine() {return this.canCombine;}
+
+    // Setters
     public void setBoard(final Board<T> that) {
         this.board = new ArrayList<>();
         for(int x = 0; x < this.getHeight(); x++) {
@@ -79,22 +88,12 @@ public class Board<T> {
         }
     }
 
-    public Tile<T> get(int x, int y) {return this.getBoard().get(x).get(y);}
-
-    public ArrayList<ArrayList<Tile<T>>> getBoard() {return this.board;}
-
-    public int getWidth() {return this.width;}
-
-    public int getHeight() {return this.height;}
-
-    public T getSpawnValue() {return this.spawnValue;}
-
     public void setWidth(int width) {this.width = width;}
 
     public void setHeight(int height) {this.height = height;}
 
-    public Combine<T> getCombine() {return this.combine;}
 
+    // General Methods
     public boolean equals(Board<T> that) {
         for(int y = 0; y < width; y++) {
             for(int x = 0; x < height; x++) {
@@ -153,12 +152,10 @@ public class Board<T> {
                 }
                 Log.d("SLIDE", "i = " + i + " | target: " + target);
                 Log.d("SLIDE", "col[i] = " + col.get(i) + " | col[target]: " + col.get(target));
-                //Log.d("SLIDE", "are they equal? " + col.get(i).equals(col.get(target)));
-                //Log.d("SLIDE", "is target empty? " + col.get(target).isEmpty());
                 if(!col.get(target).wasMoved() && !col.get(i).wasMoved()
-                        && col.get(i).equals(col.get(target))
-                        && !col.get(target).isEmpty()) {
-                    // Current and target were not moved, and they have the "same" value
+                        && !col.get(target).isEmpty()
+                        && canCombine.apply(col.get(i), col.get(target))) {
+                    // Current and target were not moved, and they can be combined
                     // Set target as the combination of the two
                     col.get(target).setVal(combine.apply(col.get(target), col.get(i)).getVal());
                     col.get(target).setMoved(true);

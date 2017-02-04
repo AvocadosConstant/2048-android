@@ -4,11 +4,11 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.TextView;
+import android.view.Menu;
+import android.view.MenuItem;
 
 public class GameActivity extends AppCompatActivity {
     Toolbar toolbar;
@@ -30,6 +30,16 @@ public class GameActivity extends AppCompatActivity {
         return new Tile<>(lhs.getVal() + rhs.getVal());
     }
 
+    /**
+     * Defines combination criteria for two Integer tiles
+     * @param lhs Left hand side Tile
+     * @param rhs Right hand side Tile
+     * @return Whether they can be combined
+     */
+    boolean canCombine(Tile<Integer> lhs, Tile<Integer> rhs) {
+        return lhs.equals(rhs);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,7 +53,7 @@ public class GameActivity extends AppCompatActivity {
         testText = (TextView) findViewById(R.id.testText);
 
         // Handle game board
-        board = new Board<>(2, this::combine);
+        board = new Board<>(2, this::combine, this::canCombine);
         old = new Board<>(board);
         boardArray = board.toStrArr();
 
