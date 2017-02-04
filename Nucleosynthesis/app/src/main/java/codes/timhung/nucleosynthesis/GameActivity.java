@@ -4,11 +4,14 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.TextView;
 import android.view.Menu;
 import android.view.MenuItem;
+import java.util.ArrayList;
 
 public class GameActivity extends AppCompatActivity {
     Toolbar toolbar;
@@ -18,7 +21,7 @@ public class GameActivity extends AppCompatActivity {
 
     Board<Integer> board;
     Board<Integer> old;
-    String[] boardArray;
+    ArrayList<String> boardArray;
 
     /**
      * Combines two Integer tiles by adding their values
@@ -95,6 +98,41 @@ public class GameActivity extends AppCompatActivity {
         });
     }
 
+    public void newGame() {
+        board = new Board<>(2, this::combine, this::canCombine);
+        old = new Board<>(board);
+        boardArray = board.toStrArrList();
+
+        // Fill boardGrid with values of the board
+        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, boardArray) {
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View view = super.getView(position, convertView, parent);
+
+                Log.d("ADAPTER_GET_VIEW", "boardArr[" + position + "] = " + boardArray.get(position));
+                int color = 0xFFCDC1B4;
+                switch(boardArray.get(position)) {
+                    case("2"): color = 0xFFEEE4D9; break;
+                    case("4"): color = 0xFFEDE0C7; break;
+                    case("8"): color = 0xFFF3B274; break;
+                    case("16"): color = 0xFFF7955D; break;
+                    case("32"): color = 0xFFF67C5F; break;
+                    case("64"): color = 0xFFF95D32; break;
+                    case("128"): color = 0xFFEDCF72; break;
+                    case("256"): color = 0xFFEDCC61; break;
+                    case("512"): color = 0xFFEDC850; break;
+                    case("1024"): color = 0xFFEDC53F; break;
+                    case("2048"): color = 0xFFECC12D; break;
+                    case("4096"): color = 0xFFFF3D3C; break;
+                    case("8192"): color = 0xFFFF1E1C; break;
+                }
+                view.setBackgroundColor(color);
+                return view;
+            }
+        };
+        boardGrid.setAdapter(adapter);
+    }
+
     public void updateBoard() {
         Log.d("UPDATE_BOARD", "Printing both boards, should be diff if valid move!");
         Log.d("UPDATE_BOARD", "old: " + old);
@@ -105,25 +143,15 @@ public class GameActivity extends AppCompatActivity {
         for(int y = 0; y < board.getWidth(); y++) {
             Log.d("UPDATE_BOARD", "-row " + y + board.rowToStr(y));
         }
-        Log.d("UPDATE_BOARD", "are the boards equal? " + board.equals(old));
+        //Log.d("UPDATE_BOARD", "are the boards equal? " + board.equals(old));
         if(!board.equals(old)) {
             Log.d("UPDATE_BOARD", "Spawning a new tile somewhere");
             board.spawn();
-            boardArray = board.toStrArr();
-            adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, boardArray);
-            boardGrid.invalidateViews();
-            boardGrid.setAdapter(adapter);
+            boardArray = board.toStrArrList();
+            adapter.clear();
+            adapter.addAll(boardArray);
+            adapter.notifyDataSetChanged();
         }
-    }
-
-    public void newGame() {
-        board = new Board<>(2, this::combine, this::canCombine);
-        old = new Board<>(board);
-        boardArray = board.toStrArr();
-
-        // Fill boardGrid with values of the board
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, boardArray);
-        boardGrid.setAdapter(adapter);
     }
 
     @Override

@@ -97,8 +97,8 @@ public class Board<T> {
     public boolean equals(Board<T> that) {
         for(int y = 0; y < width; y++) {
             for(int x = 0; x < height; x++) {
-                Log.d("BOARD_EQUALS", "(" + x + ", " + y + ") Comparing " + this.get(x,y).toString() + " and "
-                        + that.get(x, y).toString() + " | are they equal? " + this.get(x, y).equals(that.get(x, y)));
+                //Log.d("BOARD_EQUALS", "(" + x + ", " + y + ") Comparing " + this.get(x,y).toString() + " and "
+                //        + that.get(x, y).toString() + " | are they equal? " + this.get(x, y).equals(that.get(x, y)));
                 if(!this.get(x, y).equals(that.get(x, y))) return false;
             }
         } return true;
@@ -265,13 +265,13 @@ public class Board<T> {
         this.rotateCW();
     }
 
-    public String[] toStrArr() {
+    public ArrayList<String> toStrArrList() {
         int size = this.getWidth() * this.getHeight();
-        String[] boardArray = new String[size];
+        ArrayList<String> retList = new ArrayList<>();
         for(int i = 0; i < size; i++) {
-            boardArray[i] = this.get(i % 4, i / 4).toString();
+            retList.add(this.get(i % 4, i / 4).toString());
         }
-        return boardArray;
+        return retList;
     }
 
     public String rowToStr(int index) {

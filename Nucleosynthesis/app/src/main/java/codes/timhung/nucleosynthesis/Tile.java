@@ -36,6 +36,6 @@ public class Tile<T> {
 
     @Override
     public String toString() {
-        return (this.isEmpty() || this.getVal() == null) ? "." : this.getVal().toString();
+        return (this.isEmpty() || this.getVal() == null) ? "" : this.getVal().toString();
     }
 }
