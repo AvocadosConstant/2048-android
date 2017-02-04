@@ -45,22 +45,13 @@ public class GameActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
-        // Handle toolbar
+        // Grab views
+        testText = (TextView) findViewById(R.id.testText);
+        boardGrid = (GridView) findViewById(R.id.boardGrid);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        // Handle testing text view
-        testText = (TextView) findViewById(R.id.testText);
-
-        // Handle game board
-        board = new Board<>(2, this::combine, this::canCombine);
-        old = new Board<>(board);
-        boardArray = board.toStrArr();
-
-        // Fill boardGrid with values of the board
-        boardGrid = (GridView) findViewById(R.id.boardGrid);
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, boardArray);
-        boardGrid.setAdapter(adapter);
+        newGame();
 
         // Listen for swipe gestures
         boardGrid.setOnTouchListener(new OnSwipeTouchListener(GameActivity.this) {
@@ -125,6 +116,16 @@ public class GameActivity extends AppCompatActivity {
         }
     }
 
+    public void newGame() {
+        board = new Board<>(2, this::combine, this::canCombine);
+        old = new Board<>(board);
+        boardArray = board.toStrArr();
+
+        // Fill boardGrid with values of the board
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, boardArray);
+        boardGrid.setAdapter(adapter);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -134,15 +135,14 @@ public class GameActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch(item.getItemId()) {
+            case R.id.action_settings:
+                return true;
+            case R.id.new_game:
+                newGame();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
     }
 }
