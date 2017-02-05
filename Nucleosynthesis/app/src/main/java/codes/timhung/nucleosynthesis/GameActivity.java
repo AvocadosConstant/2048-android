@@ -1,6 +1,8 @@
 package codes.timhung.nucleosynthesis;
 
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -21,7 +23,7 @@ public class GameActivity extends AppCompatActivity {
 
     Board<Integer> board;
     Board<Integer> old;
-    ArrayList<String> boardArray;
+    ArrayList<String> boardContents;
 
     /**
      * Combines two Integer tiles by adding their values
@@ -101,32 +103,48 @@ public class GameActivity extends AppCompatActivity {
     public void newGame() {
         board = new Board<>(2, this::combine, this::canCombine);
         old = new Board<>(board);
-        boardArray = board.toStrArrList();
+        boardContents = board.toStrArrList();
 
         // Fill boardGrid with values of the board
-        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, boardArray) {
+        adapter = new ArrayAdapter<String>(this, R.layout.tile, boardContents) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
+                GradientDrawable tileBGShape = (GradientDrawable) view.getBackground();
 
-                Log.d("ADAPTER_GET_VIEW", "boardArr[" + position + "] = " + boardArray.get(position));
-                int color = 0xFFCDC1B4;
-                switch(boardArray.get(position)) {
-                    case("2"): color = 0xFFEEE4D9; break;
-                    case("4"): color = 0xFFEDE0C7; break;
-                    case("8"): color = 0xFFF3B274; break;
-                    case("16"): color = 0xFFF7955D; break;
-                    case("32"): color = 0xFFF67C5F; break;
-                    case("64"): color = 0xFFF95D32; break;
-                    case("128"): color = 0xFFEDCF72; break;
-                    case("256"): color = 0xFFEDCC61; break;
-                    case("512"): color = 0xFFEDC850; break;
-                    case("1024"): color = 0xFFEDC53F; break;
-                    case("2048"): color = 0xFFECC12D; break;
-                    case("4096"): color = 0xFFFF3D3C; break;
-                    case("8192"): color = 0xFFFF1E1C; break;
+                // TODO Programatically set tile color based on tile content.
+                //int resourceId= Resources.getSystem().getIdentifier("tile2048", "colors", this.getContext().getPackageName());
+                //tileBGShape.setColor(ContextCompat.getColor(this.getContext(), resourceId));
+
+                switch(boardContents.get(position)) {
+                    case "2" : tileBGShape.setColor(ContextCompat.getColor(
+                            this.getContext(), R.color.tile2)); break;
+                    case "4" : tileBGShape.setColor(ContextCompat.getColor(
+                            this.getContext(), R.color.tile4)); break;
+                    case "8" : tileBGShape.setColor(ContextCompat.getColor(
+                            this.getContext(), R.color.tile8)); break;
+                    case "16" : tileBGShape.setColor(ContextCompat.getColor(
+                            this.getContext(), R.color.tile16)); break;
+                    case "32" : tileBGShape.setColor(ContextCompat.getColor(
+                            this.getContext(), R.color.tile32)); break;
+                    case "64" : tileBGShape.setColor(ContextCompat.getColor(
+                            this.getContext(), R.color.tile64)); break;
+                    case "128" : tileBGShape.setColor(ContextCompat.getColor(
+                            this.getContext(), R.color.tile128)); break;
+                    case "256" : tileBGShape.setColor(ContextCompat.getColor(
+                            this.getContext(), R.color.tile256)); break;
+                    case "512" : tileBGShape.setColor(ContextCompat.getColor(
+                            this.getContext(), R.color.tile512)); break;
+                    case "1024" : tileBGShape.setColor(ContextCompat.getColor(
+                            this.getContext(), R.color.tile1024)); break;
+                    case "2048" : tileBGShape.setColor(ContextCompat.getColor(
+                            this.getContext(), R.color.tile2048)); break;
+                    case "4096" : tileBGShape.setColor(ContextCompat.getColor(
+                            this.getContext(), R.color.tile4096)); break;
+                    case "8192" : tileBGShape.setColor(ContextCompat.getColor(
+                            this.getContext(), R.color.tile8192)); break;
+                    default: tileBGShape.setColor(ContextCompat.getColor(this.getContext(), R.color.tileEmpty));
                 }
-                view.setBackgroundColor(color);
                 return view;
             }
         };
@@ -147,9 +165,9 @@ public class GameActivity extends AppCompatActivity {
         if(!board.equals(old)) {
             Log.d("UPDATE_BOARD", "Spawning a new tile somewhere");
             board.spawn();
-            boardArray = board.toStrArrList();
+            boardContents = board.toStrArrList();
             adapter.clear();
-            adapter.addAll(boardArray);
+            adapter.addAll(boardContents);
             adapter.notifyDataSetChanged();
         }
     }

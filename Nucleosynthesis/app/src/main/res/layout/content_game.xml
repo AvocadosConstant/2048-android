@@ -19,12 +19,18 @@
         android:layout_height="wrap_content"
         android:text="Hello World!" />
 
-
-    <GridView
-        android:id="@+id/boardGrid"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:numColumns="4"/>
+    <FrameLayout
+        android:id="@+id/boardFrame"
+        android:background="@drawable/board_bg"
+        android:padding="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <GridView
+            android:id="@+id/boardGrid"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:horizontalSpacing="10dp"
+            android:verticalSpacing="10dp"
+            android:numColumns="4"/>
+    </FrameLayout>
 </RelativeLayout>

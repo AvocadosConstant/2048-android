@@ -3,4 +3,19 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="boardFrame">#BBADA0</color>
+    <color name="tileEmpty">#CDC1B4</color>
+    <color name="tile2">#EEE4D9</color>
+    <color name="tile4">#EDE0C7</color>
+    <color name="tile8">#F3B274</color>
+    <color name="tile16">#F7955D</color>
+    <color name="tile32">#F67C5F</color>
+    <color name="tile64">#F95D32</color>
+    <color name="tile128">#EDCF72</color>
+    <color name="tile256">#EDCC61</color>
+    <color name="tile512">#EDC850</color>
+    <color name="tile1024">#EDC53F</color>
+    <color name="tile2048">#ECC12D</color>
+    <color name="tile4096">#FF3D3C</color>
+    <color name="tile8192">#FF1E1C</color>
 </resources>
