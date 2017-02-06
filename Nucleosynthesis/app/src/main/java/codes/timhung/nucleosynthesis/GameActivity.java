@@ -1,5 +1,7 @@
 package codes.timhung.nucleosynthesis;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -172,6 +174,26 @@ public class GameActivity extends AppCompatActivity {
         }
     }
 
+    public boolean newGameAlert() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Starting new game");
+        builder.setMessage("Are you sure?");
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                newGame();
+            }
+        });
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        AlertDialog alert = builder.create();
+        alert.show();
+        return true;
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -185,8 +207,7 @@ public class GameActivity extends AppCompatActivity {
             case R.id.action_settings:
                 return true;
             case R.id.new_game:
-                newGame();
-                return true;
+                return newGameAlert();
             default:
                 return super.onOptionsItemSelected(item);
         }
