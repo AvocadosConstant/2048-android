@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorPrimary">#ECC400</color>
+    <color name="colorPrimaryDark">#FBC02D</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="textPrimaryColor">#776E65</color>
+    <color name="baseBG">#FAF8EF</color>
     <color name="boardFrame">#BBADA0</color>
     <color name="tileEmpty">#CDC1B4</color>
     <color name="tile2">#EEE4D9</color>
