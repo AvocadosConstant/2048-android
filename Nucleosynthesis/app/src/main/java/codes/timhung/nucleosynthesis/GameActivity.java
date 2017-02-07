@@ -178,17 +178,13 @@ public class GameActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Starting new game");
         builder.setMessage("Are you sure?");
-        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                newGame();
-            }
+
+        builder.setPositiveButton("Yes", (DialogInterface dialog, int which) -> {
+            dialog.dismiss();
+            newGame();
         });
-        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
+        builder.setNegativeButton("No", (DialogInterface dialog, int which) -> {
+            dialog.dismiss();
         });
         AlertDialog alert = builder.create();
         alert.show();
